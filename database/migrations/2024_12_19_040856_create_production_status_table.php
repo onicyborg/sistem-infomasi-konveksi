@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('production_status', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('po_id');
+            $table->enum('pattern_status', ['Pending', 'Process', 'Done']);
+            $table->enum('cutting_status', ['Pending', 'Process', 'Done']);
+            $table->enum('sewing_status', ['Pending', 'Process', 'Done']);
+            $table->enum('qc_status', ['Pending', 'Process', 'Done']);
+            $table->enum('packing_status', ['Pending', 'Process', 'Done']);
             $table->timestamps();
+
+            $table->foreign('po_id')->references('id')->on('purchase_orders');
         });
     }
 
