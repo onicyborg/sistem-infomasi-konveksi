@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
 @section('title')
-    Detail Pesanan - Admin
+    Detail Pesanan - Kepala Produksi
 @endsection
 
 @push('styles')
@@ -102,8 +102,8 @@
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">App</a></li>
-                    <li class="breadcrumb-item"><a href="#">Pesanan</a></li>
+                    <li class="breadcrumb-item"><a href="#">Orders</a></li>
+                    <li class="breadcrumb-item"><a href="#">Pembuatan Pola</a></li>
                     <li class="breadcrumb-item active">Detail Pesanan</li>
                 </ol>
             </div>
@@ -163,59 +163,8 @@
                             {{ $order->remaining_payment == 0 ? 'Lunas' : 'Belum Lunas' }}
                         </span>
                     </p>
-                    @if ($order->remaining_payment > 0)
-                        <div class="row">
-                            <div class="col-md-8">
-                                <button class="btn btn-primary btn-sm btn-block mt-2" data-toggle="modal"
-                                    data-target="#confirmPaymentModal">
-                                    Pelunasan
-                                </button>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{{ route('order.print', $order->id) }}" target="_blank"
-                                    class="btn btn-secondary btn-block btn-sm mt-2">
-                                    <i class="ti-printer"></i>
-                                </a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="row">
-                            <div class="col-md-12">
-                                <a href="{{ route('order.print', $order->id) }}" target="_blank"
-                                    class="btn btn-secondary btn-block btn-sm mt-2">
-                                    <i class="ti-printer"></i> Print Invoice
-                                </a>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="confirmPaymentModalLabel">Konfirmasi Pembayaran</h5>
-                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Apakah Anda yakin client telah membayar sisa pembayaran sebesar:</p>
-                            <h4 class="text-center text-primary">Rp
-                                {{ number_format($order->remaining_payment, 0, ',', '.') }}</h4>
-                        </div>
-                        <div class="modal-footer">
-                            <form action="/admin/update-payment/{{ $order->id }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-success">Konfirmasi</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         <!-- Row for Progress Pesanan -->
@@ -256,27 +205,19 @@
 
                             @foreach ($steps as $index => $step)
                                 @php
-                                    // Menentukan apakah langkah ini aktif
                                     $isActive = false;
 
-                                    // Logika pengecekan status untuk setiap langkah
                                     if ($index == 0) {
-                                        // Step pertama (Pending) selalu aktif
                                         $isActive = true;
                                     } elseif ($index == 1 && in_array($patternStatus, ['Process', 'Done'])) {
-                                        // Jika Pembuatan Pola sudah dalam status 'Process' atau 'Done'
                                         $isActive = true;
                                     } elseif ($index == 2 && in_array($cuttingStatus, ['Process', 'Done'])) {
-                                        // Jika Cutting sudah dalam status 'Process' atau 'Done'
                                         $isActive = true;
                                     } elseif ($index == 3 && in_array($sewingStatus, ['Process', 'Done'])) {
-                                        // Jika Proses Jahit sudah dalam status 'Process' atau 'Done'
                                         $isActive = true;
                                     } elseif ($index == 4 && in_array($qcStatus, ['Process', 'Done'])) {
-                                        // Jika Proses QC sudah dalam status 'Process' atau 'Done'
                                         $isActive = true;
                                     } elseif ($index == 5 && in_array($packingStatus, ['Process', 'Done'])) {
-                                        // Jika Proses Packing sudah dalam status 'Process' atau 'Done'
                                         $isActive = true;
                                     } elseif (
                                         $index == 6 &&
@@ -286,7 +227,6 @@
                                         $qcStatus == 'Done' &&
                                         $packingStatus == 'Done'
                                     ) {
-                                        // Jika semua langkah sebelumnya sudah 'Done'
                                         $isActive = true;
                                     }
                                 @endphp
@@ -300,38 +240,37 @@
                             @endforeach
                         </div>
                     </div>
+
+                    <!-- Tambahkan Button di dalam Card -->
+                    <div class="card-footer mt-3">
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#patternProcessModal">
+                            Proses ke Cutting
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Row for Detail Reject -->
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <h5 class="card-title">Detail Reject</h5>
-                    <div class="card-body">
-                        @if (!$order->reject_product)
-                            <p class="text-center">Belum ada data produk yang reject</p>
-                        @else
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Size S</th>
-                                        <th>Size M</th>
-                                        <th>Size L</th>
-                                        <th>Size XL</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{{ $order->reject_product->size_s }} PCS</td>
-                                        <td>{{ $order->reject_product->size_m }} PCS</td>
-                                        <td>{{ $order->reject_product->size_l }} PCS</td>
-                                        <td>{{ $order->reject_product->size_xl }} PCS</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        @endif
+        <!-- Modal Konfirmasi -->
+        <div class="modal fade" id="patternProcessModal" tabindex="-1" aria-labelledby="patternProcessModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="patternProcessModalLabel">Konfirmasi Pemrosesan</h5>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin memproses pesanan ini ke tahap <strong>Cutting</strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <form action="/process-to-cutting/{{ $order->id }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-primary">Ya, Proses</button>
+                        </form>
                     </div>
                 </div>
             </div>

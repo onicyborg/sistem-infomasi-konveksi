@@ -17,14 +17,10 @@ class OrdersController extends Controller
         $orders = PurchaseOrders::all();
         $customers = Customers::all();
 
-        // Membuat UUID unik untuk po_number
-        $po_number = Str::uuid();
-
         // Mengirimkan data ke view
         return view('admin.orders', [
             'orders' => $orders,
             'customers' => $customers,
-            'po_number' => $po_number // Mengirimkan UUID baru ke view
         ]);
     }
 
@@ -33,7 +29,6 @@ class OrdersController extends Controller
         // Validasi input dari form
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'po_number' => 'required|string',
             'description' => 'required|string',
             'order_date' => 'required|date',
             'deadline_date' => 'required|date',
@@ -62,7 +57,7 @@ class OrdersController extends Controller
         $newOrder = new PurchaseOrders();
 
         $newOrder->customer_id = $request->customer_id;
-        $newOrder->po_number = $request->po_number;
+        $newOrder->po_number = 'PO' . date('dmYHis');
         $newOrder->description = $request->description;
         $newOrder->order_date = $request->order_date;
         $newOrder->deadline_date = $request->deadline_date;

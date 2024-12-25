@@ -20,4 +20,9 @@ class PurchaseOrders extends Model
     {
         return $this->hasOne(ProductionStatus::class, 'po_id', 'id');
     }
+
+    public function reject_product()
+    {
+        return $this->hasOne(RejectProduct::class, 'po_id', 'id');
+    }
 }

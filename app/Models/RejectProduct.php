@@ -11,6 +11,14 @@ class RejectProduct extends Model
 
     protected $table = 'reject_products';
 
+    protected $fillable = [
+        'po_id',
+        'size_s',
+        'size_m',
+        'size_l',
+        'size_xl',
+    ];
+
     public function purchase_order()
     {
         return $this->belongsTo(PurchaseOrders::class, 'po_id', 'id');

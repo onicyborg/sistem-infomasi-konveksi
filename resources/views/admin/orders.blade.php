@@ -98,6 +98,34 @@
             });
         });
     </script>
+
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'OK'
+            });
+        @endif
+    </script>
+
+    @if ($errors->any())
+        <script>
+            let errorMessage = '<ul>';
+            @foreach ($errors->all() as $error)
+                errorMessage += '<li>{{ $error }}</li>';
+            @endforeach
+            errorMessage += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                html: errorMessage, // Menggunakan 'html' untuk menampilkan daftar error
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
 @endpush
 
 @section('content')
@@ -192,7 +220,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="/admin/orders/{{ $order->id }}" class="btn btn-info btn-sm"><i class="ti-panel"></i></a>
+                                        <a href="/admin/orders/{{ $order->id }}" class="btn btn-info btn-sm"><i
+                                                class="ti-panel"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -247,11 +276,6 @@
                                         <option value="{{ $customer->id }}">{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="po_number" class="form-label">Nomor PO</label>
-                                <input type="text" id="po_number" name="po_number" value="{{ $po_number }}"
-                                    class="form-control" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Deskripsi</label>

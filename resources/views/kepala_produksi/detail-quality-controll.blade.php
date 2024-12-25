@@ -89,6 +89,23 @@
             });
         @endif
     </script>
+
+    @if ($errors->any())
+        <script>
+            let errorMessage = '<ul>';
+            @foreach ($errors->all() as $error)
+                errorMessage += '<li>{{ $error }}</li>';
+            @endforeach
+            errorMessage += '</ul>';
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                html: errorMessage, // Menggunakan 'html' untuk menampilkan daftar error
+                confirmButtonText: 'OK'
+            });
+        </script>
+    @endif
 @endpush
 
 @section('content')
@@ -102,8 +119,8 @@
             </div>
             <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">App</a></li>
-                    <li class="breadcrumb-item"><a href="#">Pesanan</a></li>
+                    <li class="breadcrumb-item"><a href="#">Orders</a></li>
+                    <li class="breadcrumb-item"><a href="#">Quality Controll</a></li>
                     <li class="breadcrumb-item active">Detail Pesanan</li>
                 </ol>
             </div>
@@ -163,59 +180,8 @@
                             {{ $order->remaining_payment == 0 ? 'Lunas' : 'Belum Lunas' }}
                         </span>
                     </p>
-                    @if ($order->remaining_payment > 0)
-                        <div class="row">
-                            <div class="col-md-8">
-                                <button class="btn btn-primary btn-sm btn-block mt-2" data-toggle="modal"
-                                    data-target="#confirmPaymentModal">
-                                    Pelunasan
-                                </button>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{{ route('order.print', $order->id) }}" target="_blank"
-                                    class="btn btn-secondary btn-block btn-sm mt-2">
-                                    <i class="ti-printer"></i>
-                                </a>
-                            </div>
-                        </div>
-                    @else
-                        <div class="row">
-                            <div class="col-md-12">
-                                <a href="{{ route('order.print', $order->id) }}" target="_blank"
-                                    class="btn btn-secondary btn-block btn-sm mt-2">
-                                    <i class="ti-printer"></i> Print Invoice
-                                </a>
-                            </div>
-                        </div>
-                    @endif
                 </div>
             </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="confirmPaymentModal" tabindex="-1" aria-labelledby="confirmPaymentModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="confirmPaymentModalLabel">Konfirmasi Pembayaran</h5>
-                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Apakah Anda yakin client telah membayar sisa pembayaran sebesar:</p>
-                            <h4 class="text-center text-primary">Rp
-                                {{ number_format($order->remaining_payment, 0, ',', '.') }}</h4>
-                        </div>
-                        <div class="modal-footer">
-                            <form action="/admin/update-payment/{{ $order->id }}" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-success">Konfirmasi</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
         <!-- Row for Progress Pesanan -->
@@ -300,6 +266,50 @@
                             @endforeach
                         </div>
                     </div>
+                    @if (!$order->reject_product)
+                        <p class="text-center">Belum ada data produk yang reject</p>
+                        <div class="card-footer mt-3">
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#patternProcessModal" disabled>
+                                Proses ke Packing
+                            </button>
+                            <p class="mt-2 text-danger">
+                                Harap submit data reject terlebih dahulu untuk melanjutkan ke proses packing.
+                            </p>
+                        </div>
+                    @else
+                        <div class="card-footer mt-3">
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#patternProcessModal">
+                                Proses ke Packing
+                            </button>
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="patternProcessModal" tabindex="-1" aria-labelledby="patternProcessModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="patternProcessModalLabel">Konfirmasi Pemrosesan</h5>
+                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        Apakah Anda yakin ingin memproses pesanan ini ke tahap <strong>Packing</strong>? Setelah anda
+                        konfirmasi data reject tidak akan dapat di update lagi.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                        <form action="/process-to-packing/{{ $order->id }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-primary">Ya, Proses</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,9 +342,55 @@
                                 </tbody>
                             </table>
                         @endif
+                        <button class="btn btn-primary mt-3" data-toggle="modal" data-target="#updateRejectModal">
+                            Update Data Reject
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Modal untuk Input Data Reject -->
+        <div class="modal fade" id="updateRejectModal" tabindex="-1" aria-labelledby="updateRejectModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="/update-reject-product/{{ $order->id }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="updateRejectModalLabel">Update Data Reject</h5>
+                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="size_s" class="form-label">Reject Size S</label>
+                                <input type="number" class="form-control" id="size_s" name="size_s" min="0"
+                                    value="{{ $order->reject_product->size_s ?? 0 }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="size_m" class="form-label">Reject Size M</label>
+                                <input type="number" class="form-control" id="size_m" name="size_m" min="0"
+                                    value="{{ $order->reject_product->size_m ?? 0 }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="size_l" class="form-label">Reject Size L</label>
+                                <input type="number" class="form-control" id="size_l" name="size_l" min="0"
+                                    value="{{ $order->reject_product->size_l ?? 0 }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="size_xl" class="form-label">Reject Size XL</label>
+                                <input type="number" class="form-control" id="size_xl" name="size_xl" min="0"
+                                    value="{{ $order->reject_product->size_xl ?? 0 }}" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection

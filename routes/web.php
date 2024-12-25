@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\OrdersProcessController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,12 +48,33 @@ Route::middleware(['auth'])->group(function () {
     });
 
     Route::group(['middleware' => 'role:kepala_produksi'], function () {
-        Route::get('/admin/dashboard', function () {
-            //
-        });
-        Route::get('/admin/settings', function () {
-            //
-        });
+        Route::get('/kepala-produksi/orders-pending', [OrdersProcessController::class, 'index_pending']);
+        Route::get('/kepala-produksi/orders-pending/{id}', [OrdersProcessController::class, 'detail_pending']);
+        Route::put('/process-to-pattern/{id}', [OrdersProcessController::class, 'process_to_pattern']);
+
+        Route::get('/kepala-produksi/orders-pattern', [OrdersProcessController::class, 'index_pattern']);
+        Route::get('/kepala-produksi/orders-pattern/{id}', [OrdersProcessController::class, 'detail_pattern']);
+        Route::put('/process-to-cutting/{id}', [OrdersProcessController::class, 'process_to_cutting']);
+
+        Route::get('/kepala-produksi/orders-cutting', [OrdersProcessController::class, 'index_cutting']);
+        Route::get('/kepala-produksi/orders-cutting/{id}', [OrdersProcessController::class, 'detail_cutting']);
+        Route::put('/process-to-sewing/{id}', [OrdersProcessController::class, 'process_to_sewing']);
+
+        Route::get('/kepala-produksi/orders-sewing', [OrdersProcessController::class, 'index_sewing']);
+        Route::get('/kepala-produksi/orders-sewing/{id}', [OrdersProcessController::class, 'detail_sewing']);
+        Route::put('/process-to-qc/{id}', [OrdersProcessController::class, 'process_to_qc']);
+
+        Route::get('/kepala-produksi/orders-qc', [OrdersProcessController::class, 'index_qc']);
+        Route::get('/kepala-produksi/orders-qc/{id}', [OrdersProcessController::class, 'detail_qc']);
+        Route::put('/process-to-packing/{id}', [OrdersProcessController::class, 'process_to_packing']);
+        Route::put('/update-reject-product/{id}', [OrdersProcessController::class, 'updateReject']);
+
+        Route::get('/kepala-produksi/orders-packing', [OrdersProcessController::class, 'index_packing']);
+        Route::get('/kepala-produksi/orders-packing/{id}', [OrdersProcessController::class, 'detail_packing']);
+        Route::put('/process-to-done/{id}', [OrdersProcessController::class, 'process_to_done']);
+
+        Route::get('/kepala-produksi/orders-done', [OrdersProcessController::class, 'index_done']);
+        Route::get('/kepala-produksi/orders-done/{id}', [OrdersProcessController::class, 'detail_done']);
     });
 
     Route::get('/logout', [AuthController::class, 'logout']);
