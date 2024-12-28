@@ -21,6 +21,12 @@
                         <div class="row no-gutters">
                             <div class="col-xl-12">
                                 <div class="auth-form">
+
+                                    <div class="text-center mb-4" style="background-color: #593bdb; padding: 20px;">
+                                        <img src="{{ asset('images/logo2.png') }}" alt="Logo" style="max-width: 50px; height: auto;">
+                                        <img src="{{ asset('images/logo-text2.png') }}" alt="Logo" style="max-width: 150px; height: auto;">
+                                    </div>
+
                                     <h4 class="text-center mb-4">Sign in to your account</h4>
                                     <form action="{{ route('auth') }}" method="POST">
                                         @csrf

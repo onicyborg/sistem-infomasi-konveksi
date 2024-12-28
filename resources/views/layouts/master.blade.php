@@ -44,9 +44,9 @@
         ***********************************-->
         <div class="nav-header">
             <a href="index.html" class="brand-logo">
-                <img class="logo-abbr" src="{{ asset('images/logo.png') }}" alt="">
-                <img class="logo-compact" src="{{ asset('images/logo-text.png') }}" alt="">
-                <img class="brand-title" src="{{ asset('images/logo-text.png') }}" alt="">
+                <img class="logo-abbr" src="{{ asset('images/logo2.png') }}" alt="">
+                <img class="logo-compact" src="{{ asset('images/logo-text2.png') }}" alt="">
+                <img class="brand-title" src="{{ asset('images/logo-text2.png') }}" alt="">
             </a>
 
             <div class="nav-control">
@@ -115,13 +115,13 @@
 
         <!--**********************************
             Footer start
-        ***********************************-->
+        {{-- ***********************************-->
         <div class="footer">
             <div class="copyright">
                 <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">Quixkit</a> 2019</p>
                 <p>Distributed by <a href="https://themewagon.com/" target="_blank">Themewagon</a></p>
             </div>
-        </div>
+        </div> --}}
         <!--**********************************
             Footer end
         ***********************************-->
