@@ -53,11 +53,24 @@ class OrdersController extends Controller
             $cashPayment = $request->total_price;
         }
 
+        // Format tanggal hari ini
+        $today = date('Y-m-d');
+        $prefix = 'PO' . date('Ymd'); // Tahun + Bulan + Tanggal
+
+        // Hitung jumlah PO yang dibuat hari ini
+        $totalToday = PurchaseOrders::whereDate('created_at', $today)->count();
+
+        // Tentukan nomor urut
+        $sequence = str_pad($totalToday + 1, 3, '0', STR_PAD_LEFT);
+
+        // Gabungkan prefix dengan nomor urut
+        $poNumber = $prefix . $sequence;
+
         // Membuat data pesanan baru
         $newOrder = new PurchaseOrders();
 
         $newOrder->customer_id = $request->customer_id;
-        $newOrder->po_number = 'PO' . date('dmYHis');
+        $newOrder->po_number = $poNumber;
         $newOrder->description = $request->description;
         $newOrder->order_date = $request->order_date;
         $newOrder->deadline_date = $request->deadline_date;

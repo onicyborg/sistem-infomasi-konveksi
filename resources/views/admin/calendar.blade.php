@@ -13,7 +13,7 @@
     <script src="{{ asset('vendor/fullcalendar/js/fullcalendar.min.js') }}"></script>
     <script>
         $(document).ready(function() {
-            // Inisialisasi FullCalendar dengan styling yang disesuaikan
+            // Inisialisasi FullCalendar
             $('#calendar').fullCalendar({
                 header: {
                     left: 'prev,next today',
@@ -35,8 +35,8 @@
                             extendedProps: {
                                 po_number: '{{ $order->po_number }}',
                                 customer_name: '{{ $order->customer->name }}',
-                                phone_number: '{{ $order->phone_number }}',
-                                address: '{{ $order->address }}',
+                                phone_number: '{{ $order->customer->phone_number }}',
+                                address: '{{ $order->customer->address }}',
                                 description: '{{ $order->description }}',
                                 order_date: '{{ $order->order_date }}',
                                 deadline_date: '{{ $order->deadline_date }}',
@@ -58,8 +58,8 @@
                             extendedProps: {
                                 po_number: '{{ $order->po_number }}',
                                 customer_name: '{{ $order->customer->name }}',
-                                phone_number: '{{ $order->phone_number }}',
-                                address: '{{ $order->address }}',
+                                phone_number: '{{ $order->customer->phone_number }}',
+                                address: '{{ $order->customer->address }}',
                                 description: '{{ $order->description }}',
                                 order_date: '{{ $order->order_date }}',
                                 deadline_date: '{{ $order->deadline_date }}',
@@ -81,24 +81,28 @@
                 eventLimit: true,
                 selectable: false,
                 eventClick: function(event) {
-                    // Tampilkan detail order di modal
+                    // Ambil properti tambahan dari event
                     const props = event.extendedProps;
-                    $('#event-modal .modal-title').text(event.title);
-                    $('#event-modal .modal-body').html(`
-                <p><strong>PO Number:</strong> ${props.po_number}</p>
-                <p><strong>Customer Name:</strong> ${props.customer_name}</p>
-                <p><strong>Phone Number:</strong> ${props.phone_number}</p>
-                <p><strong>Address:</strong> ${props.address}</p>
-                <p><strong>Description:</strong> ${props.description}</p>
-                <p><strong>Order Date:</strong> ${moment(props.order_date).format('DD MMMM YYYY')}</p>
-                <p><strong>Deadline Date:</strong> ${moment(props.deadline_date).format('DD MMMM YYYY')}</p>
-                <p><strong>Raw Material Quantity:</strong> ${props.raw_material_quantity} yard</p>
-                <p><strong>Sizes:</strong> S: ${props.size_s}, M: ${props.size_m}, L: ${props.size_l}, XL: ${props.size_xl}</p>
-                <p><strong>Total Price:</strong> Rp ${props.total_price}</p>
-                <p><strong>DP:</strong> Rp ${props.dp}</p>
-                <p><strong>Remaining Payment:</strong> Rp ${props.remaining_payment}</p>
-                <p><strong>Cash Payment:</strong> Rp ${props.cash_payment}</p>
-            `);
+
+                    // Isi data ke modal
+                    $('#po-number').text(props.po_number);
+                    $('#customer-name').text(props.customer_name);
+                    $('#phone-number').text(props.phone_number);
+                    $('#address').text(props.address);
+                    $('#description').text(props.description);
+                    $('#order-date').text(moment(props.order_date).format('DD MMMM YYYY'));
+                    $('#deadline-date').text(moment(props.deadline_date).format('DD MMMM YYYY'));
+                    $('#raw-material').text(props.raw_material_quantity);
+                    $('#size-s').text(props.size_s);
+                    $('#size-m').text(props.size_m);
+                    $('#size-l').text(props.size_l);
+                    $('#size-xl').text(props.size_xl);
+                    $('#total-price').text(props.total_price);
+                    $('#dp').text(props.dp);
+                    $('#remaining-payment').text(props.remaining_payment);
+                    $('#cash-payment').text(props.cash_payment);
+
+                    // Tampilkan modal
                     $('#event-modal').modal('show');
                 }
             });
@@ -143,7 +147,36 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <!-- Konten detail akan diisi oleh JavaScript -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="text-muted"><strong>PO Number:</strong> <span id="po-number"></span></p>
+                                    <p class="text-muted"><strong>Customer Name:</strong> <span id="customer-name"></span>
+                                    </p>
+                                    <p class="text-muted"><strong>Phone Number:</strong> <span id="phone-number"></span></p>
+                                    <p class="text-muted"><strong>Address:</strong> <span id="address"></span></p>
+                                    <p class="text-muted"><strong>Description:</strong> <span id="description"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted"><strong>Order Date:</strong> <span id="order-date"></span></p>
+                                    <p class="text-muted"><strong>Deadline Date:</strong> <span id="deadline-date"></span>
+                                    </p>
+                                    <p class="text-muted"><strong>Raw Material Quantity:</strong> <span
+                                            id="raw-material"></span> yard</p>
+                                    <p class="text-muted"><strong>Sizes:</strong>
+                                        S: <span id="size-s"></span> PCS,
+                                        M: <span id="size-m"></span> PCS,
+                                        L: <span id="size-l"></span> PCS,
+                                        XL: <span id="size-xl"></span> PCS
+                                    </p>
+                                    <p class="text-muted"><strong>Total Price:</strong> Rp <span id="total-price"></span>
+                                    </p>
+                                    <p class="text-muted"><strong>DP:</strong> Rp <span id="dp"></span></p>
+                                    <p class="text-muted"><strong>Remaining Payment:</strong> Rp <span
+                                            id="remaining-payment"></span></p>
+                                    <p class="text-muted"><strong>Cash Payment:</strong> Rp <span id="cash-payment"></span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

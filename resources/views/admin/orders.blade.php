@@ -190,13 +190,13 @@
                                             <span class="badge badge-warning">Belum Lunas</span>
                                         @endif
                                     </td>
-                                    <td class="text-muted">
+                                    <td class="text-muted text-center">
                                         @if (
-                                            $order->production_status->pattern_status == 'done' &&
-                                                $order->production_status->cutting_status == 'done' &&
-                                                $order->production_status->sewing_status == 'done' &&
-                                                $order->production_status->qc_status == 'done' &&
-                                                $order->production_status->packing_status == 'done')
+                                            $order->production_status->pattern_status == 'Done' &&
+                                                $order->production_status->cutting_status == 'Done' &&
+                                                $order->production_status->sewing_status == 'Done' &&
+                                                $order->production_status->qc_status == 'Done' &&
+                                                $order->production_status->packing_status == 'Done')
                                             <span class="badge badge-success">Selesai</span>
                                         @elseif (
                                             $order->production_status->pattern_status == 'done' &&
@@ -205,15 +205,15 @@
                                                 $order->production_status->qc_status == 'done')
                                             <span class="badge badge-info">Dipacking</span>
                                         @elseif (
-                                            $order->production_status->pattern_status == 'done' &&
-                                                $order->production_status->cutting_status == 'done' &&
-                                                $order->production_status->sewing_status == 'done')
+                                            $order->production_status->pattern_status == 'Done' &&
+                                                $order->production_status->cutting_status == 'Done' &&
+                                                $order->production_status->sewing_status == 'Done')
                                             <span class="badge badge-info">Quality Controll</span>
-                                        @elseif ($order->production_status->pattern_status == 'done' && $order->production_status->cutting_status == 'done')
+                                        @elseif ($order->production_status->pattern_status == 'Done' && $order->production_status->cutting_status == 'Done')
                                             <span class="badge badge-info">Dijahit</span>
-                                        @elseif ($order->production_status->pattern_status == 'done')
+                                        @elseif ($order->production_status->pattern_status == 'Done')
                                             <span class="badge badge-info">Cutting</span>
-                                        @elseif ($order->production_status->pattern_status == 'process')
+                                        @elseif ($order->production_status->pattern_status == 'Process')
                                             <span class="badge badge-info">Pembuatan Pola</span>
                                         @else
                                             <span class="badge badge-warning">Pending</span>

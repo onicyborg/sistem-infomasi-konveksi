@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\OrdersProcessController;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +28,9 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/', function () {
-        return view('admin.welcome');
-    });
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/sales-data', [DashboardController::class, 'getSalesData']);
+    Route::post('/purchase-orders/export', [DashboardController::class, 'exportToExcel'])->name('purchase_orders.export');
 
     Route::group(['middleware' => 'role:admin'], function () {
         Route::get('/admin/customers', [CustomersController::class, 'index'])->name('customers.index');
